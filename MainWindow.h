@@ -11,6 +11,7 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class QDomElement;
+class QTableWidget;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,12 +29,14 @@ private slots:
     void on_browseHeightMap_clicked();
     void on_browseMaterialsMap_clicked();
     void on_comboBoxPlanetSelection_currentIndexChanged(int index);
-
     void on_tableWidgetOres_itemSelectionChanged();
-
     void on_tableWidgetMaterials_itemSelectionChanged();
+    void on_tableWidgetOres_customContextMenuRequested(const QPoint &pos);
+
+    void copyOresTableToClipboard();
 
 private:
+    void copyTableToClipboard(QTableWidget *table);
     MapStatistics m_stats;
     QVector<Planet> m_planets;
     bool parsePlanet(const QDomElement& rootElement, Planet *planet);

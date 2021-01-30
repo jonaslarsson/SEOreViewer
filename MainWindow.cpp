@@ -8,6 +8,7 @@
 #include <QMimeData>
 #include <QUrl>
 #include <QDomDocument>
+#include <QClipboard>
 
 namespace
 {
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_gui(new Ui::MainWindow)
 {
     m_gui->setupUi(this);
+    m_gui->tableWidgetOres->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 MainWindow::~MainWindow()
@@ -360,4 +362,36 @@ void MainWindow::on_tableWidgetMaterials_itemSelectionChanged()
         int materialValue = m_gui->tableWidgetMaterials->selectedItems().first()->text().toInt();
         m_gui->mapWidget->setHighlightMaterial(materialValue);
     }
+}
+
+void MainWindow::on_tableWidgetOres_customContextMenuRequested(const QPoint &pos)
+{
+    QMenu *menu = new QMenu(this);
+    QAction *copyTable = new QAction("Copy entire table to clipboard", this);
+    connect(copyTable, &QAction::triggered, this, &MainWindow::copyOresTableToClipboard);
+    menu->addAction(copyTable);
+    menu->popup(m_gui->tableWidgetOres->viewport()->mapToGlobal(pos));
+}
+
+void MainWindow::copyOresTableToClipboard()
+{
+    copyTableToClipboard(m_gui->tableWidgetOres);
+}
+
+void MainWindow::copyTableToClipboard(QTableWidget *table)
+{
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    QStringList tableData;
+    QStringList rowData;
+    for (int row = 0; row < table->rowCount(); row++)
+    {
+        rowData.clear();
+        for (int column = 0; column < table->columnCount(); column++)
+        {
+            rowData << table->item(row, column)->text();
+        }
+        tableData << rowData.join("\t");
+    }
+
+    clipboard->setText(tableData.join("\r\n"));
 }
