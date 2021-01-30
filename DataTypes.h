@@ -12,10 +12,17 @@ struct Ore
     int depth;
 };
 
+struct Material
+{
+    QString name;
+    int value;
+};
+
 struct Planet
 {
     QString name;
     QVector<Ore> ores;
+    QVector<Material> materials;
 };
 
 #endif // DATATYPES_H
